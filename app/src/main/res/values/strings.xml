@@ -23,5 +23,9 @@
     <string name="lbl_camera">Camera</string>
     <string name="lbl_gallery">Gallery</string>
 
+    <string name="title_select_dish_type">SELECT DISH TYPE</string>
+    <string name="title_select_dish_category">SELECT DISH CATEGORY</string>
+    <string name="title_select_dish_cooking_time">SELECT COOKING TIME IN MINUTES</string>
+
     <!--END-->
 </resources>
