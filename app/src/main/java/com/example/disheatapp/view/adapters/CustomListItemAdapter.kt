@@ -1,17 +1,22 @@
 package com.example.disheatapp.view.adapters
 
 import android.app.Activity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.disheatapp.databinding.ItemCustomListBinding
+import com.example.disheatapp.view.activities.AddUpdateDishActivity
+import com.example.disheatapp.view.fragments.AllDishesFragment
 
 // TODO Step 8: Create a custom list adapter to use it while showing the list item in the RecyclerView.
 // START
 class CustomListItemAdapter(
     private val activity: Activity,
+    private val fragment:AllDishesFragment?,
     private val listItems: List<String>,
     private val selection: String
+
 ) :
     RecyclerView.Adapter<CustomListItemAdapter.ViewHolder>() {
 
@@ -40,8 +45,15 @@ class CustomListItemAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val item = listItems[position]
-
         holder.tvText.text = item
+        holder.itemView.setOnClickListener{
+            if(activity is AddUpdateDishActivity){
+                activity.selectedListItem(item, selection)
+            }
+
+            if(fragment is AllDishesFragment)
+                fragment.filterSelection(item)
+        }
     }
 
     /**
@@ -56,7 +68,7 @@ class CustomListItemAdapter(
      */
     class ViewHolder(view: ItemCustomListBinding) : RecyclerView.ViewHolder(view.root) {
         // Holds the TextView that will add each item to
-        val tvText = view.tvText
+       val tvText = view.tvText
 
     }
 }

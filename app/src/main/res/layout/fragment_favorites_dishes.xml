@@ -7,7 +7,7 @@
     tools:context=".view.fragments.AllDishesFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_dishes_list"
+        android:id="@+id/rv_favorite_dishes_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="visible"
@@ -17,11 +17,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_no_dishes_added_yet"
+        android:id="@+id/tv_no_favorite_dishes_added_yet"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        android:text="@string/label_no_dishes_added_yet"
+        android:text="@string/label_no_favorite_dishes_added_yet"
         android:textSize="@dimen/_16sdp"
         android:textStyle="bold"
         android:visibility="gone"
