@@ -12,6 +12,33 @@ object Constants {
     const val ALL_ITEMS: String = "All"
     const val FILTER_SELECTION: String = "FilterSelection"
 
+    const val BASE_URL = "https://api.spoonacular.com/"
+
+    const val API_ENDPOINT: String = "recipes/random"
+
+    // API KEY VALUE from the spoonacular console.
+    const val API_KEY_VALUE: String = "b760a897d2214315a150b9f5b39fb0c1"
+
+    // KEY PARAMS
+    const val API_KEY: String = "apiKey"
+    const val LIMIT_LICENSE: String = "limitLicense"
+    const val TAGS: String = "tags"
+    const val NUMBER: String = "number"
+
+    // TODO Step 5: Add the default values to the constants.
+    // START
+    // KEY PARAMS VALUES ==> YOU CAN CHANGE AS PER REQUIREMENT FROM HERE TO MAKE THE DIFFERNCE IN THE API RESPONSE.
+    const val LIMIT_LICENSE_VALUE: Boolean = true
+    const val TAGS_VALUE: String = "vegetarian, dessert"
+    const val NUMBER_VALUE: Int = 1
+
+    // END
+
+    const val NOTIFICATION_ID = "FavDish_notification_id"
+    const val NOTIFICATION_NAME = "FavDish"
+    const val NOTIFICATION_CHANNEL = "FavDish_channel_01"
+
+
     // TODO Step 2: Define the Dish Types list items.
     // START
     /**

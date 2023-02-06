@@ -1,18 +1,22 @@
 package com.example.disheatapp.view.fragments
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import androidx.palette.graphics.Palette
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.navArgs
 
 import com.bumptech.glide.Glide
@@ -24,15 +28,18 @@ import com.example.disheatapp.R
 import com.example.disheatapp.application.FavDishApplication
 
 import com.example.disheatapp.databinding.FragmentDishDetailsBinding
+import com.example.disheatapp.model.entities.FavDish
+import com.example.disheatapp.utils.Constants
 import com.example.disheatapp.viewmodel.FavDishViewModel
 import com.example.disheatapp.viewmodel.FavDishViewModelFactory
 import java.io.IOException
 import java.util.*
 
 
-class DishDetailsFragment : Fragment() {
+class DishDetailsFragment : Fragment(), MenuProvider {
 
     private var mBinding: FragmentDishDetailsBinding? = null
+    private var mFavDishDetails: FavDish? = null
 
     /**
      * To create the ViewModel we used the viewModels delegate, passing in an instance of our FavDishViewModelFactory.
@@ -51,6 +58,8 @@ class DishDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         mBinding = FragmentDishDetailsBinding.inflate(inflater, container, false)
         return mBinding!!.root
     }
@@ -59,6 +68,7 @@ class DishDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val args: DishDetailsFragmentArgs by navArgs()
+        mFavDishDetails = args.dishDetails
 
         args.let {
 
@@ -105,7 +115,18 @@ class DishDetailsFragment : Fragment() {
                 it.dishDetails.type.capitalize(Locale.ROOT) // Used to make first letter capital
             mBinding!!.tvCategory.text = it.dishDetails.category
             mBinding!!.tvIngredients.text = it.dishDetails.ingredients
-            mBinding!!.tvCookingDirection.text = it.dishDetails.directionToCook
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                mBinding!!.tvCookingDirection.text = Html.fromHtml(
+                    it.dishDetails.directionToCook,
+                    Html.FROM_HTML_MODE_COMPACT
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                mBinding!!.tvCookingDirection.text = Html.fromHtml(it.dishDetails.directionToCook)
+            }
+
             mBinding!!.tvCookingTime.text =
                 resources.getString(R.string.lbl_estimate_cooking_time, it.dishDetails.cookingTime)
 
@@ -173,4 +194,58 @@ class DishDetailsFragment : Fragment() {
         super.onDestroy()
         mBinding = null
     }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.menu_share, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.action_share_dish -> {
+                val type = "text/plain"
+                val subject = "Checkout this dish recipe"
+                var extraText = ""
+                val shareWith = "Share with"
+
+                mFavDishDetails?.let {
+
+                    var image = ""
+
+                    if (it.imageSource == Constants.DISH_IMAGE_SOURCE_ONLINE) {
+                        image = it.image
+                    }
+
+                    var cookingInstructions = ""
+
+                    // The instruction or you can say the Cooking direction text is in the HTML format so we will you the fromHtml to populate it in the TextView.
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        cookingInstructions = Html.fromHtml(
+                            it.directionToCook,
+                            Html.FROM_HTML_MODE_COMPACT
+                        ).toString()
+                    } else {
+                        @Suppress("DEPRECATION")
+                        cookingInstructions = Html.fromHtml(it.directionToCook).toString()
+                    }
+
+                    extraText =
+                        "$image \n" +
+                                "\n Title:  ${it.title} \n\n Type: ${it.type} \n\n Category: ${it.category}" +
+                                "\n\n Ingredients: \n ${it.ingredients} \n\n Instructions To Cook: \n $cookingInstructions" +
+                                "\n\n Time required to cook the dish approx ${it.cookingTime} minutes."
+                }
+
+
+
+
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.type = type
+                intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+                intent.putExtra(Intent.EXTRA_TEXT, extraText)
+                startActivity(Intent.createChooser(intent, shareWith))
+            }
+        }
+        return super.onOptionsItemSelected(menuItem)
+    }
+
 }

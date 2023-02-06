@@ -63,12 +63,14 @@ class AllDishesFragment : Fragment(), MenuProvider {
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
+
         return  mBinding!!.root
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         mBinding?.rvDishesList?.layoutManager = GridLayoutManager(requireActivity(), 2)
         mFavDishAdapter = FavDishAdapter(this@AllDishesFragment)
         mBinding?.rvDishesList?.adapter =  mFavDishAdapter
@@ -214,10 +216,7 @@ class AllDishesFragment : Fragment(), MenuProvider {
                         }
                     }
                 }
-
     }
     }
-
-
 
 }
